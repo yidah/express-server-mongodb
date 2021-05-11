@@ -7,9 +7,12 @@ const shopRoutes = require('./routes/shop');
 const bodyParser = require('body-parser');
 const errorController = require('./controllers/error');
 
-// Mongodb
-const mongoConnect= require('./util/database').mongoConnect;
-const User = require('./models/user');
+
+// const User = require('./models/user');
+
+// Mongoose - we do not need a database connection set up as mongoose
+// does it for us.
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -29,15 +32,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // we add a field to a req object to save the user I get from db after initialization in req
-app.use((req, res, next) => {
-  User.findById('6092ba2fe68f4b55a56a7031')
-    .then((user) => {
-      // we can add a field like this to req object
-      req.user = new User(user.name, user.email, user.cart, user._id);
-      next();
-    })
-    .catch((err) => console.log(err));
-});
+// app.use((req, res, next) => {
+//   User.findById('6092ba2fe68f4b55a56a7031')
+//     .then((user) => {
+//       // we can add a field like this to req object
+//       req.user = new User(user.name, user.email, user.cart, user._id);
+//       next();
+//     })
+//     .catch((err) => console.log(err));
+// });
 
 // using filters so all the routes in admin contain admin at the beggining
 app.use('/admin', adminRoutes);
@@ -45,8 +48,13 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoConnect(()=>{
-  app.listen(3000);
-});
-
-
+// same string that was given in mongoDB
+mongoose
+  .connect(
+    // 'mongodb+srv://yidah:yidah@cluster0.ym4dc.mongodb.net/shopdb?retryWrites=true&w=majority'
+    'mongodb+srv://yidah:yidah@cluster0.7agkk.mongodb.net/shopdb?retryWrites=true&w=majority'
+  )
+  .then((results) => {
+    app.listen(3000);
+  })
+  .catch((err) => console.log(err));
