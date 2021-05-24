@@ -23,7 +23,7 @@ router.get('/edit-product/:productId', adminController.getEditProduct);
 
 // router.post('/delete-product', adminController.postDeleteProduct);
 
-// My comments here in source so can be reflected in target another comment same line
+// another comment
 
 // export router
 module.exports = router;
